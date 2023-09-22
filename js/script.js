@@ -12,11 +12,58 @@ let leftHand = "";
 let ans = "";
 let historyArray = [];
 
-document.addEventListener("DOMContentLoaded", () => {
-  const numkeysContainer = document.querySelectorAll(".numKey");
-  const operatorkeysContainer = document.querySelectorAll(".operatorKey");
+function operationFunction(a, b, operator) {
+  if (operator === "+") {
+    result.innerHTML = a + b;
+    ans = result.innerHTML;
+  } else if (operator === "-") {
+    result.innerHTML = a - b;
+    ans = result.innerHTML;
+  } else if (operator === "*") {
+    result.innerHTML = a * b;
+    ans = result.innerHTML;
+  } else if (operator === "/") {
+    if (b === 0) {
+      result.innerHTML = "Can't divide by 0.";
+      ans = 0;
+    } else {
+      result.innerHTML = a / b;
+      ans = result.innerHTML;
+    }
+  }
+}
 
-  operatorkeysContainer.forEach((key) => {
+function addToHistory(obj) {
+  let htmlContentToAppend = "";
+
+  if (obj.output === "Can't divide by 0.") {
+    obj.output = "Error.";
+  }
+
+  if (historyArray.length <= 4) {
+    historyArray.unshift(obj);
+  } else {
+    historyArray.pop();
+    historyArray.unshift(obj);
+  }
+
+  historyArray.forEach((element) => {
+    htmlContentToAppend += `
+          <div class="history">
+              <p class="historyInput">${element.input}</p>
+              <p class="historyOutput">${element.output}</p>
+          </div>
+          `;
+  });
+
+  document.getElementById("historyContainer").innerHTML = htmlContentToAppend;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const numKeys = document.querySelectorAll(".numKey");
+  const operatorKeys = document.querySelectorAll(".operatorKey");
+
+  operatorKeys.forEach((key) => {
     key.addEventListener("click", () => {
       numInput.innerHTML += key.innerHTML;
       operation = key.innerHTML;
@@ -26,60 +73,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  numkeysContainer.forEach((key) => {
+  numKeys.forEach((key) => {
     key.addEventListener("click", () => {
       numInput.innerHTML += key.innerHTML;
     });
   });
 
   equal.addEventListener("click", () => {
-    let i = 0;
-    let htmlContentToAppend = "";
     let a = parseFloat(leftHand);
     let b = parseFloat(numInput.innerHTML.slice(leftHand.length + 1));
 
-    if (operation === "+") {
-      result.innerHTML = a + b;
-      ans = result.innerHTML;
-    } else if (operation === "-") {
-      result.innerHTML = a - b;
-      ans = result.innerHTML;
-    } else if (operation === "*") {
-      result.innerHTML = a * b;
-      ans = result.innerHTML;
-    } else if (operation === "/") {
-      if (b === 0) {
-        result.innerHTML = "Math Error";
-        ans = 0;
-      } else {
-        result.innerHTML = a / b;
-        ans = result.innerHTML;
-      }
-    }
+    operationFunction(a, b, operation);
 
-    if (historyArray.length <= 4) {
-      historyArray.unshift({
-        input: numInput.innerHTML,
-        output: result.innerHTML,
-      });
-    } else {
-      historyArray.pop();
-      historyArray.unshift({
-        input: numInput.innerHTML,
-        output: result.innerHTML,
-      });
-    }
+    let newEntry = {
+      input: numInput.innerHTML,
+      output: result.innerHTML,
+    };
 
-    historyArray.forEach((element) => {
-      htmlContentToAppend += `
-            <div class="history">
-                <p class="historyInput">${element.input}</p>
-                <p class="historyOutput">${element.output}</p>
-            </div>
-            `;
-    });
-
-    document.getElementById("historyContainer").innerHTML = htmlContentToAppend;
+    addToHistory(newEntry);
   });
 
   clear.addEventListener("click", () => {
