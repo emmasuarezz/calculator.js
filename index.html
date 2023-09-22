@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="css/styles.css" />
+
+    <title>calculator.js</title>
+  </head>
+  <body>
+    <div class="container">
+      <div id="topBar"></div>
+      <div id="filas">
+        <div class="colSmall paddingR1">
+          <div id="titulo"><h1>calculator( );</h1></div>
+          <div class="boxContainer">
+            <div id="firstParagraph">
+              <h3>add<span>,</span> subtract<span>,</span></h3>
+            </div>
+            <div id="secondParagraph">
+              <h3>multiply <span>and</span> divide<span>!</span></h3>
+            </div>
+            <div id="thirdParagraph">
+              <h3 id="nothing">nothing</h3>
+              <h3 id="more">else<span>!</span></h3>
+            </div>
+          </div>
+        </div>
+        <div class="calculadora">
+          <div id="topContainer">
+            <div class="top">
+              <div class="pantalla">
+                <div id="pantallaTop">
+                  <p id="numInput"></p>
+                </div>
+                <div id="pantallaBottom">
+                  <p id="numOutput">0.</p>
+                </div>
+              </div>
+            </div>
+            <div class="bottom">
+              <h2>calculator( );</h2>
+            </div>
+          </div>
+          <div class="keysContainer">
+            <div class="numpadContainer">
+              <div>
+                <div class="keySmall key">
+                  <div id="plus" class="small impactSign operatorKey">+</div>
+                </div>
+                <div class="keyBig key">
+                  <div id="key7" class="big impact numKey">7</div>
+                </div>
+                <div class="keyBig key">
+                  <div id="key4" class="big impact numKey">4</div>
+                </div>
+                <div class="keyBig key">
+                  <div id="key1" class="big impact numKey">1</div>
+                </div>
+              </div>
+              <div>
+                <div class="keySmall key">
+                  <div id="minus" class="small impactSign operatorKey">-</div>
+                </div>
+                <div class="keyBig key">
+                  <div id="key8" class="big impact numKey">8</div>
+                </div>
+                <div class="keyBig key">
+                  <div id="key5" class="big impact numKey">5</div>
+                </div>
+                <div class="keyBig key">
+                  <div id="key2" class="big impact numKey">2</div>
+                </div>
+              </div>
+              <div>
+                <div class="keySmall key">
+                  <div id="star" class="small impactSign operatorKey">*</div>
+                </div>
+                <div class="keyBig key">
+                  <div id="key9" class="big impact numKey">9</div>
+                </div>
+                <div class="keyBig key">
+                  <div id="key6" class="big impact numKey">6</div>
+                </div>
+                <div class="keyBig key">
+                  <div id="key3" class="big impact numKey">3</div>
+                </div>
+              </div>
+              <div>
+                <div class="keySmall key">
+                  <div id="divide" class="small impactSign operatorKey">/</div>
+                </div>
+                <div class="keyBig key">
+                  <div id="c" class="big impact specialKey">C</div>
+                </div>
+                <div class="keyBig key">
+                  <div id="keyDecimal" class="big impact numKey">.</div>
+                </div>
+                <div class="keyBig key">
+                  <div id="key0" class="big impact numKey">0</div>
+                </div>
+              </div>
+              <div>
+                <div class="keySmall key">
+                  <div id="keyAns" class="small impact specialKey">ANS</div>
+                </div>
+                <div id="secondKey" class="keyBig key">
+                  <div id="ac" class="big impact specialKey">AC</div>
+                </div>
+                <div class="key" id="igualBox">
+                  <div id="igual" class="impact specialKey igualCover">=</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="colSmall"></div>
+      </div>
+    </div>
+  </body>
+  <script src="js/script.js"></script>
+</html>
