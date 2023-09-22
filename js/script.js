@@ -4,10 +4,13 @@ let equal = document.getElementById("igual");
 let numInput = document.getElementById("numInput");
 let result = document.getElementById("numOutput");
 let ansButton = document.getElementById("keyAns");
+let historyContainer = document.getElementById("historyContainer");
+let historyClear = document.getElementById("clear");
 
 let operation = "";
 let leftHand = "";
 let ans = "";
+let historyArray = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   const numkeysContainer = document.querySelectorAll(".numKey");
@@ -30,6 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   equal.addEventListener("click", () => {
+    let i = 0;
+    let htmlContentToAppend = "";
     let a = parseFloat(leftHand);
     let b = parseFloat(numInput.innerHTML.slice(leftHand.length + 1));
 
@@ -51,8 +56,32 @@ document.addEventListener("DOMContentLoaded", () => {
         ans = result.innerHTML;
       }
     }
-    console.log(ans);
+
+    if (historyArray.length <= 4) {
+      historyArray.unshift({
+        input: numInput.innerHTML,
+        output: result.innerHTML,
+      });
+    } else {
+      historyArray.pop();
+      historyArray.unshift({
+        input: numInput.innerHTML,
+        output: result.innerHTML,
+      });
+    }
+
+    historyArray.forEach((element) => {
+      htmlContentToAppend += `
+            <div class="history">
+                <p class="historyInput">${element.input}</p>
+                <p class="historyOutput">${element.output}</p>
+            </div>
+            `;
+    });
+
+    document.getElementById("historyContainer").innerHTML = htmlContentToAppend;
   });
+
   clear.addEventListener("click", () => {
     numInput.innerHTML = "";
     operation = "";
@@ -65,5 +94,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   ansButton.addEventListener("click", () => {
     numInput.innerHTML = ans;
+  });
+
+  historyClear.addEventListener("click", () => {
+    historyArray = [];
+    historyContainer.innerHTML = "";
   });
 });
