@@ -67,6 +67,16 @@ function addToHistory(obj) {
     obj.output = "Error.";
   }
 
+  //Se limita el largo de los strings para que se vean mejor en el historial.
+
+  if (obj.output.length > 9) {
+    obj.output = parseFloat(obj.output.slice(0, 9)) + "...";
+  }
+
+  if (obj.input.length > 16) {
+    obj.input = parseFloat(obj.input.slice(0, 16)) + operation + "...";
+  }
+
   //Se agrega la entrada al historial y se valida que no se agreguen mas de 5 entradas.
   //Si se agregan mas de 5, se elimina la ultima entrada y se agrega la nueva al principio.
 
@@ -128,8 +138,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //Event listeners para los botones de numeros.
   //Al presionarlos, se agrega el numero al input (parte de arriba del display).
-
-  //S
+  //La estructura de control es para resetear el input
+  //si se presiona el boton de igual y despues se presiona un numero.
 
   numKeys.forEach((key) => {
     key.addEventListener("click", () => {
