@@ -14,6 +14,12 @@ h1 {
 h2 {
   font-family: "Russo One", sans-serif;
   color: #cac7be;
+  transition: all 0.3s ease-in-out;
+}
+
+h2:hover {
+  color: #d6d0bf;
+  text-shadow: #c47e14 0px 0px 15px;
 }
 
 p {
@@ -29,6 +35,14 @@ span {
 h3 {
   color: #2ba3c2;
   font-family: "Alfa Slab One", cursive;
+}
+
+a {
+  text-decoration: none;
+  margin-top: 4;
+  font-family: "Press Start 2P", cursive;
+  font-size: 10px;
+  color: #2ba3c2;
 }
 
 .container {
@@ -85,6 +99,7 @@ h3 {
   border-radius: 50px;
   border: solid 6px #2ba3c2;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
@@ -124,6 +139,7 @@ h3 {
   flex-direction: column;
   justify-content: space-around;
   padding-left: 20px;
+  overflow: hidden;
 }
 
 #pantallaTop {
@@ -137,6 +153,7 @@ h3 {
   display: flex;
   width: 100%;
   justify-content: flex-end;
+  align-items: flex-end;
 }
 
 .numpadContainer {
@@ -267,12 +284,18 @@ h3 {
 }
 
 .key:hover .small,
-.key:hover .big,
+.key:hover .big {
+  cursor: pointer;
+  background-color: #828275 !important;
+  color: #828275 !important;
+  border: none;
+}
+
 .key:hover .specialKey,
 .key:hover .igualCover {
   cursor: pointer;
-  background-color: #30252f !important;
-  color: #30252f !important;
+  background-color: #75521e !important;
+  color: #75521e !important;
   border: none;
 }
 
