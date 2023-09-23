@@ -10,22 +10,30 @@ let historyClear = document.getElementById("clear");
 let operation = "";
 let leftHand = "";
 let ans = "";
+let res = "";
 let historyArray = [];
 let equalKeyPressed = false;
 let operatorKeyPressed = false;
+let ansKeyPressed = false;
+let ansFirst = false;
+let ansSecond = false;
 
 function operationFunction(a, b, operator) {
   //Se compara el operador ingresado
   //para realizar la operacion correspondiente y se valida
   //que no se divida por 0.
 
-  if (b !== Number) {
-    result.innerHTML = a;
-    ans = result.innerHTML;
+  if (isNaN(b)) {
+    if (isNaN(a)) {
+      result.innerHTML = "Syntax Error.";
+      ans = 0;
+    } else {
+      result.innerHTML = a;
+      ans = result.innerHTML;
+    }
   }
-
   if (operator === "+") {
-    let res = a + b;
+    res = a + b;
     if (res.toString.length < 20) {
       result.innerHTML = res;
     } else {
@@ -33,7 +41,7 @@ function operationFunction(a, b, operator) {
     }
     ans = result.innerHTML;
   } else if (operator === "-") {
-    let res = a - b;
+    res = a - b;
     if (res.toString.length < 20) {
       result.innerHTML = res;
     } else {
@@ -41,7 +49,7 @@ function operationFunction(a, b, operator) {
     }
     ans = result.innerHTML;
   } else if (operator === "*") {
-    let res = a * b;
+    res = a * b;
     if (res.toString.length < 20) {
       result.innerHTML = res;
     } else {
@@ -53,12 +61,14 @@ function operationFunction(a, b, operator) {
       result.innerHTML = "Can't divide by 0.";
       ans = 0;
     } else {
-      let res = a / b;
+      res = a / b;
       if (res.toString.length < 20) {
         result.innerHTML = res;
       } else {
         result.innerHTML = res.toPrecision(20);
       }
+
+      console.log(res);
       ans = result.innerHTML;
     }
   }
@@ -70,6 +80,10 @@ function addToHistory(obj) {
   //Cambiamos el mensaje de error para que se vea mejor en el historial.
 
   if (obj.output === "Can't divide by 0.") {
+    obj.output = "Error.";
+  }
+
+  if (obj.output === "Syntax Error.") {
     obj.output = "Error.";
   }
 
@@ -104,7 +118,7 @@ function addToHistory(obj) {
           `;
   });
 
-  //Se agrega el html al historial.
+  //Se agrega al HTML.
 
   document.getElementById("historyContainer").innerHTML = htmlContentToAppend;
 }
@@ -120,26 +134,35 @@ document.addEventListener("DOMContentLoaded", () => {
   //y se guardan los valores del numero ingresado antes del operador y que operador se selecciono.
   operatorKeys.forEach((key) => {
     key.addEventListener("click", () => {
-      //Se valida que no se presione un operador si no hay un numero ingresado, o si ya se ingresó uno antes.
+      //Se valida que no se presione un operador si no hay un numero ingresado
 
       if (numInput.innerHTML === "") {
         numInput.innerHTML += "";
       } else {
+        operatorKeyPressed = true;
+
+        //Se valida que se presionó el boton de igual para
+        //mostrar el resultado de la operacion anterior en el input
+        //y poder seguir operando con ese resultado, sin necesidad de presionar el boton de ans.
+
         if (equalKeyPressed) {
           equalKeyPressed = false;
-          numInput.innerHTML = result.innerHTML;
+          if (result.innerHTML === "Can't divide by 0.") {
+            numInput.innerHTML = "";
+          } else {
+            numInput.innerHTML = result.innerHTML;
+          }
         }
 
-        operatorKeyPressed = true;
+        //Al presionar las teclas se va formando un string adentro del input.
+        //Para poder agarrar el numero ingresado antes del operador,
+        //se usa slice para agarrar el string desde el principio hasta
+        //el ultimo caracter antes del operador.
+
         numInput.innerHTML += key.innerHTML;
         operation = key.innerHTML;
         leftHand = numInput.innerHTML.slice(0, -1);
       }
-
-      //Al presionar las teclas se va formando un string adentro del input.
-      //Para poder agarrar el numero ingresado antes del operador,
-      //se usa slice para agarrar el string desde el principio hasta
-      //el ultimo caracter antes del operador.
     });
   });
 
@@ -150,12 +173,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   numKeys.forEach((key) => {
     key.addEventListener("click", () => {
+      //Al presionar el boton de igual y despues un numero, se resetea el input
+      //al numero presionado. Si el ultimo comando no fue el de igual, se agrega el numero al input.
+
       if (equalKeyPressed) {
         equalKeyPressed = false;
         numInput.innerHTML = key.innerHTML;
         leftHand = numInput.innerHTML;
       } else {
         numInput.innerHTML += key.innerHTML;
+
+        //Mientras no se presione un operador, quiero guardar el numero ingresado
+        //para el caso que se presione igual sin ningun operador. En ese caso solo mostramos
+        //el input en el output.
+
         if (!operatorKeyPressed) {
           leftHand = numInput.innerHTML;
         }
@@ -166,25 +197,54 @@ document.addEventListener("DOMContentLoaded", () => {
   //Event listeners para los botones de operaciones especiales.
   equal.addEventListener("click", () => {
     //Se valida que se presionó el boton de igual para cambiar el comportamiento
-    //de la calculadora en caso de que se presione un numero despues.
+    //de la calculadora en caso de que se presione un numero despues. Reseteamos que se presionó un operador tambien.
     equalKeyPressed = true;
     operatorKeyPressed = false;
-    console.log(leftHand);
+    ansKeyPressed = false;
 
-    let a = parseFloat(leftHand); //El numero ingresado antes del operador.
+    //Los objetos son para poder integrar bien la funcion ANS, al ser presionada
+    //quiero que la pantalla muestre ANS pero aun asi operar con el valor
+    //del resultado anterior.
 
-    let b = parseFloat(numInput.innerHTML.slice(leftHand.length + 1)); //Para conseguir el numero ingresado despues del operador pensé de la siguiente forma:
-    //El primer dígito del segundo numero ingresado despues del operador
-    //siempre va a estar despues del largo del primero numero, osea,
-    //cuantos dígitos tiene el primer numero ingresado (lefthand), + 1 porque
-    //no precisamos el operador, y como slice no incluye el caracter en la posicion de inicio,
-    //podemos decirle que comience desde la posicion operador.
+    let num1 = {
+      display: numInput.innerHTML,
+      input: parseFloat(leftHand),
+    }; //El numero ingresado antes del operador.
 
+    if (ansFirst || leftHand.includes("ANS")) {
+      ansFirst = false;
+      num1 = {
+        display: "ANS",
+        input: parseFloat(ans),
+      };
+    }
+    let num2 = {
+      display: numInput.innerHTML.slice(leftHand.length + 1),
+      input: parseFloat(numInput.innerHTML.slice(leftHand.length + 1)),
+    }; //El numero ingresado despues del operador.
+
+    //Para conseguir el numero ingresado despues del operador pensé de la siguiente forma:
+    //El primer dígito del segundo numero ingresado despues del operador siempre va a estar despues
+    //del largo del primero numero, osea,  despues de n dígitos que tiene el primer numero ingresado (lefthand), + 1 porque
+    //no precisamos el operador, y como slice no incluye el caracter en la posicion de inicio, podemos decirle
+    //que comience desde la posicion del operador.
+
+    if (ansSecond) {
+      ansSecond = false;
+      num2 = {
+        display: "ANS",
+        input: parseFloat(ans),
+      };
+    }
     //Se llama a la funcion que realiza la operacion con los dos numeros ingresados y el operador.
-    operationFunction(a, b, operation);
+    operationFunction(num1.input, num2.input, operation);
 
-    //Se crea un objeto con el input y el output de la operacion realizada para el historial, el caso que
-    //el input sea vacio no se agrega al historial.
+    if (isNaN(res)) {
+      result.innerHTML = "Syntax Error.";
+    }
+
+    //Se crea un objeto con el input y el output de la operacion realizada para el historial, en el caso que
+    //el input sea vacio o solo un punto no se agrega al historial.
     if (numInput.innerHTML !== "" && numInput.innerHTML !== ".") {
       let newEntry = {
         input: numInput.innerHTML,
@@ -195,30 +255,39 @@ document.addEventListener("DOMContentLoaded", () => {
       addToHistory(newEntry);
 
       //Se resetea el operador y el leftHand para que no se acumulen.
-
       operation = "";
       leftHand = "";
     }
   });
 
   clear.addEventListener("click", () => {
-    clearKeyPressed = true;
+    //Se resetean todas las variables y se resetea el display.
+
+    equalKeyPressed = false;
+    operatorKeyPressed = false;
     numInput.innerHTML = "";
     operation = "";
-    result.innerHTML = "0.";
+    result.innerHTML = "0";
   });
 
   backspace.addEventListener("click", () => {
-    backspaceKeyPressed = true;
     numInput.innerHTML = numInput.innerHTML.slice(0, -1);
   });
 
   ansButton.addEventListener("click", () => {
+    ansKeyPressed = true;
+
     if (equalKeyPressed) {
+      ansFirst = true;
       equalKeyPressed = false;
-      numInput.innerHTML = ans;
+      numInput.innerHTML = "ANS";
     } else {
-      numInput.innerHTML += ans;
+      if (operatorKeyPressed) {
+        ansSecond = true;
+        numInput.innerHTML += "ANS";
+      } else {
+        numInput.innerHTML = "ANS";
+      }
     }
   });
 
