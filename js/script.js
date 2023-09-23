@@ -12,11 +12,17 @@ let leftHand = "";
 let ans = "";
 let historyArray = [];
 let equalKeyPressed = false;
+let operatorKeyPressed = false;
 
 function operationFunction(a, b, operator) {
   //Se compara el operador ingresado
   //para realizar la operacion correspondiente y se valida
   //que no se divida por 0.
+
+  if (b !== Number) {
+    result.innerHTML = a;
+    ans = result.innerHTML;
+  }
 
   if (operator === "+") {
     let res = a + b;
@@ -114,25 +120,26 @@ document.addEventListener("DOMContentLoaded", () => {
   //y se guardan los valores del numero ingresado antes del operador y que operador se selecciono.
   operatorKeys.forEach((key) => {
     key.addEventListener("click", () => {
-      //Se valida que no se presione un operador si no hay un numero ingresado.
+      //Se valida que no se presione un operador si no hay un numero ingresado, o si ya se ingresó uno antes.
 
       if (numInput.innerHTML === "") {
-        numInput.innerHTML = "";
+        numInput.innerHTML += "";
       } else {
         if (equalKeyPressed) {
           equalKeyPressed = false;
-          operation = key.innerHTML;
-          numInput.innerHTML = ans;
+          numInput.innerHTML = result.innerHTML;
         }
+
+        operatorKeyPressed = true;
+        numInput.innerHTML += key.innerHTML;
         operation = key.innerHTML;
-        numInput.innerHTML += operation;
+        leftHand = numInput.innerHTML.slice(0, -1);
       }
 
       //Al presionar las teclas se va formando un string adentro del input.
       //Para poder agarrar el numero ingresado antes del operador,
       //se usa slice para agarrar el string desde el principio hasta
       //el ultimo caracter antes del operador.
-      leftHand = numInput.innerHTML.slice(0, -1);
     });
   });
 
@@ -144,10 +151,14 @@ document.addEventListener("DOMContentLoaded", () => {
   numKeys.forEach((key) => {
     key.addEventListener("click", () => {
       if (equalKeyPressed) {
-        numInput.innerHTML = key.innerHTML;
         equalKeyPressed = false;
+        numInput.innerHTML = key.innerHTML;
+        leftHand = numInput.innerHTML;
       } else {
         numInput.innerHTML += key.innerHTML;
+        if (!operatorKeyPressed) {
+          leftHand = numInput.innerHTML;
+        }
       }
     });
   });
@@ -157,42 +168,54 @@ document.addEventListener("DOMContentLoaded", () => {
     //Se valida que se presionó el boton de igual para cambiar el comportamiento
     //de la calculadora en caso de que se presione un numero despues.
     equalKeyPressed = true;
+    operatorKeyPressed = false;
+    console.log(leftHand);
 
-    let a = parseFloat(leftHand); //el numero ingresado antes del operador.
+    let a = parseFloat(leftHand); //El numero ingresado antes del operador.
 
-    //Para conseguir el numero ingresado despues del operador pensé de la siguiente forma:
+    let b = parseFloat(numInput.innerHTML.slice(leftHand.length + 1)); //Para conseguir el numero ingresado despues del operador pensé de la siguiente forma:
     //El primer dígito del segundo numero ingresado despues del operador
     //siempre va a estar despues del largo del primero numero, osea,
     //cuantos dígitos tiene el primer numero ingresado (lefthand), + 1 porque
     //no precisamos el operador, y como slice no incluye el caracter en la posicion de inicio,
     //podemos decirle que comience desde la posicion operador.
-    let b = parseFloat(numInput.innerHTML.slice(leftHand.length + 1));
 
     //Se llama a la funcion que realiza la operacion con los dos numeros ingresados y el operador.
     operationFunction(a, b, operation);
 
-    //Se crea un objeto con el input y el output de la operacion realizada para el historial.
-    let newEntry = {
-      input: numInput.innerHTML,
-      output: result.innerHTML,
-    };
+    //Se crea un objeto con el input y el output de la operacion realizada para el historial, el caso que
+    //el input sea vacio no se agrega al historial.
+    if (numInput.innerHTML !== "" && numInput.innerHTML !== ".") {
+      let newEntry = {
+        input: numInput.innerHTML,
+        output: result.innerHTML,
+      };
 
-    //Se llama a la funcion que agrega la entrada al historial con el último resultado.
-    addToHistory(newEntry);
+      //Se llama a la funcion que agrega la entrada al historial con el último resultado.
+      addToHistory(newEntry);
+
+      //Se resetea el operador y el leftHand para que no se acumulen.
+
+      operation = "";
+      leftHand = "";
+    }
   });
 
   clear.addEventListener("click", () => {
+    clearKeyPressed = true;
     numInput.innerHTML = "";
     operation = "";
     result.innerHTML = "0.";
   });
 
   backspace.addEventListener("click", () => {
+    backspaceKeyPressed = true;
     numInput.innerHTML = numInput.innerHTML.slice(0, -1);
   });
 
   ansButton.addEventListener("click", () => {
     if (equalKeyPressed) {
+      equalKeyPressed = false;
       numInput.innerHTML = ans;
     } else {
       numInput.innerHTML += ans;
