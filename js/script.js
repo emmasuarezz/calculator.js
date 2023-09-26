@@ -32,6 +32,11 @@ function operationFunction(a, b, operator) {
       ans = result.innerHTML;
     }
   }
+  //Chequeamos que la entrada sea correcta y no por ejemplo, 2+2+.
+  //Si la entrada es correcta, se realiza la operacion correspondiente, sino se muestra un mensaje de error.
+  //Si el resultado es mayor a 20 digitos, se muestra con toPrecision(20) para que no se rompa el display.
+  //Si el resultado es menor a 20 digitos, se muestra el resultado sin toPrecision(20) para que no se muestren ceros de mas.
+
   if (operator === "+") {
     res = a + b;
     if (res.toString.length < 20) {
@@ -68,7 +73,7 @@ function operationFunction(a, b, operator) {
         result.innerHTML = res.toPrecision(20);
       }
 
-      console.log(res);
+      //Asignamos el resultado a la variable ans para poder usarla en la funcion ANS.
       ans = result.innerHTML;
     }
   }
@@ -154,10 +159,10 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
 
-        //Al presionar las teclas se va formando un string adentro del input.
+        //Al presionar las teclas numericas se va formando un string adentro del input.
         //Para poder agarrar el numero ingresado antes del operador,
         //se usa slice para agarrar el string desde el principio hasta
-        //el ultimo caracter antes del operador.
+        //el ultimo caracter antes del operador, osea, el largo del string - 1.
 
         numInput.innerHTML += key.innerHTML;
         operation = key.innerHTML;
@@ -194,10 +199,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  //Event listeners para los botones de operaciones especiales.
   equal.addEventListener("click", () => {
-    //Se valida que se presionó el boton de igual para cambiar el comportamiento
-    //de la calculadora en caso de que se presione un numero despues. Reseteamos que se presionó un operador tambien.
+    //Se marca que se presionó el boton de igual para cambiar el comportamiento
+    //de la calculadora en caso de que se presione un numero despues. Reseteamos que se presionó un operador y ANS.
     equalKeyPressed = true;
     operatorKeyPressed = false;
     ansKeyPressed = false;
@@ -208,10 +212,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let num1 = {
       display: numInput.innerHTML,
-      input: parseFloat(leftHand),
+      input: parseFloat(leftHand), //Convertimos el string a float.
     }; //El numero ingresado antes del operador.
 
-    if (ansFirst || leftHand.includes("ANS")) {
+    if (ansFirst) {
       ansFirst = false;
       num1 = {
         display: "ANS",
@@ -220,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     let num2 = {
       display: numInput.innerHTML.slice(leftHand.length + 1),
-      input: parseFloat(numInput.innerHTML.slice(leftHand.length + 1)),
+      input: parseFloat(numInput.innerHTML.slice(leftHand.length + 1)), //Convertimos el string a float.
     }; //El numero ingresado despues del operador.
 
     //Para conseguir el numero ingresado despues del operador pensé de la siguiente forma:
@@ -267,16 +271,23 @@ document.addEventListener("DOMContentLoaded", () => {
     operatorKeyPressed = false;
     numInput.innerHTML = "";
     operation = "";
+    leftHand = "";
+    ans = 0;
     result.innerHTML = "0";
   });
 
   backspace.addEventListener("click", () => {
     numInput.innerHTML = numInput.innerHTML.slice(0, -1);
+    //Cortamos el ultimo caracter del string.
   });
 
   ansButton.addEventListener("click", () => {
+    //Se marca que se presionó el boton de ANS para cambiar el comportamiento
     ansKeyPressed = true;
 
+    //Si se presionó el boton de igual, se muestra el string "ANS" primero.
+    //Y el booleno ansFirst se hace true, esto le indica a la funcion de igual que
+    //el primer numero ingresado es el resultado guardado en la variable ans.
     if (equalKeyPressed) {
       ansFirst = true;
       equalKeyPressed = false;
